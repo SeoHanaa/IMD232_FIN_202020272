@@ -1,99 +1,75 @@
-const tiles = [];
-const rowNum = 50,
-  colNum = 50;
+/**
+ * 조작법
+
+ * mouse click         : 시작
+ * space               : 색 랜덤 바꾸기
+ * backspace           : 다시 시작하기
+ * r                   : 리버스(반대로 돌아가기)
+ * arrow up            : 돌아가는 속도 +
+ * arrow down          : 돌아가는 속도 -
+ */
+
+let c;
+let img;
+
+let angle = 0;
+let angleSpeed = 1;
+
+let lineSize = 0;
+
+function preload() {
+  img = loadImage('text.png');
+  img1 = loadImage('title1.png');
+  img2 = loadImage('title2.png');
+}
 
 function setup() {
   setCanvasContainer('canvas', 1, 1, true);
+  background('black');
+  cursor(CROSS);
+  // noCursor();
+  strokeWeight(0.75);
 
-  const w = width / colNum;
-  const h = w;
-  for (let row = 0; row < rowNum; row++) {
-    for (let col = 0; col < colNum; col++) {
-      const x = w * col;
-      const y = h * row;
-      const newTile = new Cell(x, y, w, h);
-      tiles.push(newTile);
-    }
-  }
-  for (let row = 0; row < rowNum; row++) {
-    for (let col = 0; col < colNum; col++) {
-      const neighborsIdx = [
-        getIdx(row - 1, col - 1),
-        getIdx(row - 1, col),
-        getIdx(row - 1, col + 1),
-        getIdx(row, col + 1),
-        getIdx(row + 1, col + 1),
-        getIdx(row + 1, col),
-        getIdx(row + 1, col - 1),
-        getIdx(row, col - 1),
-      ];
-      if (col === 0) {
-        neighborsIdx[0] = -1;
-        neighborsIdx[6] = -1;
-        neighborsIdx[7] = -1;
-      } else if (col === colNum - 1) {
-        neighborsIdx[2] = -1;
-        neighborsIdx[3] = -1;
-        neighborsIdx[4] = -1;
-      }
-      if (row === 0) {
-        neighborsIdx[0] = -1;
-        neighborsIdx[1] = -1;
-        neighborsIdx[2] = -1;
-      } else if (row === rowNum - 1) {
-        neighborsIdx[4] = -1;
-        neighborsIdx[5] = -1;
-        neighborsIdx[6] = -1;
-      }
-      const neighbors = [];
-      neighborsIdx.forEach((eachIdx) => {
-        neighbors.push(eachIdx >= 0 ? tiles[eachIdx] : null);
-      });
-      const idx = getIdx(row, col);
-      tiles[idx].setNeighbors(neighbors);
-    }
-  }
-  randomSeed(1);
-  tiles.forEach((each) => {
-    if (random() > 0.5) each.state = true;
-  });
-
-  frameRate(15);
-  background(255);
-  tiles.forEach((each) => {
-    each.display(mouseX, mouseY);
-  });
+  c = color(252, 255, 134);
 }
 
 function draw() {
-  background(255);
+  let x = width / 2;
+  let y = height / 2;
 
-  tiles.forEach((each) => {
-    each.calcNextState();
-  });
-  tiles.forEach((each) => {
-    each.update();
-  });
+  image(img, width / 2 - 135, 80);
+  // image(img1, width / 2 - 100, height / 2, 460, 60);
+  // image(img2, width / 2 - 100, height / 2 - 100, 200, 50);
 
-  tiles.forEach((each) => {
-    each.display(mouseX, mouseY);
-  });
+  push();
+  translate(x, y);
+  rotate(radians(angle));
+
+  stroke(c);
+  line(0, 0, lineSize, lineSize);
+
+  angle += angleSpeed;
+  pop();
 }
 
-function getIdx(row, col) {
-  return row * colNum + col;
+//랜덤한 길이
+function mousePressed() {
+  lineSize = random(120, 200);
+  img;
 }
 
-function mouseClicked() {
-  for (let idx = 0; idx < tiles.length; idx++)
-    if (tiles[idx].toggleState(mouseX, mouseY)) break;
-}
+function keyReleased() {
+  if (keyCode == BACKSPACE) background('black');
 
-function keyPressed() {
-  // tiles.forEach((each) => {
-  //   each.calcNextState();
-  // });
-  // tiles.forEach((each) => {
-  //   each.update();
-  // });
+  if (keyCode == UP_ARROW) angleSpeed += 0.32;
+  if (keyCode == DOWN_ARROW) angleSpeed -= 0.32;
+
+  // 리버스
+  if (key == 'r' || key == 'R') {
+    angle += 180;
+  }
+
+  // 컬러 바꾸기
+  if (key == ' ')
+    c = color(random(255), random(255), random(255), random(100, 140));
 }

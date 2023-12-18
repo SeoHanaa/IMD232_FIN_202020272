@@ -9,7 +9,7 @@ body {
   line-height: 2rem;
   overflow: hidden;
   margin: 0;
-  font-family: "Spoqa Han Sans Neo", sans-serif;
+  font-family: 'Spoqa Han Sans Neo', sans-serif;
   font-weight: 400;
   color: oklch(90% 0 0/1);
   word-break: keep-all;
@@ -287,4 +287,13 @@ canvas {
 }
 .table::-webkit-scrollbar-thumb {
   background-color: oklch(60% 0 0/1);
+}
+
+.image-container {
+  display: flex;
+}
+
+.image-container img {
+  margin-right: 10px; /* 이미지 사이에 간격을 조절할 수 있습니다. */
+  margin-inline: auto;
 }
